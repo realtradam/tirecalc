@@ -1,0 +1,39 @@
+### 1. File containing the relevant code
+The logic is embedded directly within the HTML file you provided: `Tire Size Calculator.html` (specifically between lines 2944 and 2981).
+
+### 2. How the calculations are done
+The math is based on finding the circumference of the wheel (`Circumference = Pi * Diameter`). 
+1. **Total Diameter:** It takes the **Rim Diameter** (`r`) and adds it to twice the **Tire Width/Diameter** (`t`) because the tire sits on both the top and bottom of the rim. This gives the total wheel diameter: `(2 * t + r)`.
+2. **Circumference:** It multiplies the total diameter by `3.13772`. This is a slightly modified value of Pi (π ≈ 3.14159), which is commonly used in cycling to account for the tire compressing under the rider's weight (often called "roll-out" circumference).
+3. **Conversions:** Once the circumference is calculated in millimeters (`d`), it converts it to:
+   - **Centimeters:** Divides by 10.
+   - **Inches:** Divides by 25.4.
+   - **MPH Setting:** Divides by 1.6 (likely a specific calibration setting for their computers, converting km to miles).
+
+### 3. Relevant Code
+Here is the exact JavaScript snippet from the file that handles this logic:
+
+````javascript
+function Recalc() {
+    // Get Rim and Tire values in millimeters
+    var r = parseFloat(document.Calc.RimDiameter.value);
+    var t = parseFloat(document.Calc.TireDiameter.value);
+    
+    if (r > 0 && t > 0) {
+        // Calculate circumference in mm
+        var d = 3.13772 * (2 * t + r);
+        
+        // Output the rounded values
+        document.Calc.mm.value = Math.round(d);
+        document.Calc.cm.value = Math.round(d / 10);
+        document.Calc.inches.value = Math.round(10 * d / 25.4) / 10;
+        document.Calc.MPH.value = Math.round(d / 1.6);
+    } else {
+        // Clear fields if inputs are invalid
+        document.Calc.mm.value = '';
+        document.Calc.cm.value = '';
+        document.Calc.inches.value = '';
+        document.Calc.MPH.value = '';
+    }
+}
+````

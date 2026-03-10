@@ -1,0 +1,33 @@
+# --------------------------------------------------------------------------
+# docker-compose.yml — One-command dev environment for the app.
+#
+# Key points:
+#   • `volumes` bind-mounts the project root into /app so file changes on
+#     the host are instantly visible inside the container (live reload).
+#   • An anonymous volume for node_modules prevents the host's
+#     node_modules from overriding the container's (they may differ by OS).
+#   • `ports` maps container 5173 → host 5173 so you can open the app
+#     at http://<host-ip>:5173 from any machine on your LAN.
+# --------------------------------------------------------------------------
+
+services:
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    volumes:
+      # Mount the entire project directory into the container
+      - .:/app
+
+      # Keep container's node_modules separate from the host's.
+      # This anonymous volume is created once, then reused across restarts.
+      - /app/node_modules
+    environment:
+      # Tells Vite / chokidar to use polling for file-change detection,
+      # which is required when code lives on a bind-mounted volume.
+      - CHOKIDAR_USEPOLLING=true
+    # Keep stdin open so we can interact if needed (e.g. Ctrl-C)
+    stdin_open: true
+    tty: true
