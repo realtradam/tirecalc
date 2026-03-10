@@ -19,7 +19,7 @@ export default defineConfig({
     // a machine name on the LAN such as "arch-razer").
     // Vite's `host: true` already binds to all interfaces; this explicit
     // whitelist helps documentation and tooling that may inspect the config.
-    allowedHosts: ['arch-razer'],
+    allowedHosts: ['arch-razer', 'tirecalc.malcz.com'],
 
     // Explicitly set the port (must match the EXPOSE in Dockerfile).
     port: 5173,
