@@ -10,3 +10,8 @@ node_modules
 dist
 .git
 *.log
+.ask_user.md
+ai_prompt.md
+docker_readme.md
+README.md
+.tool-versions

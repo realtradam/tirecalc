@@ -1,0 +1,27 @@
+# --------------------------------------------------------------------------
+# docker-compose.prod.yml — Production deployment for the Bicycle Wheel
+# Circumference app.
+#
+# Builds a static bundle and serves it with Nginx on port 80.
+# Designed for use with Dokploy (Traefik handles TLS and routing).
+#
+# Local usage:
+#   docker compose -f docker-compose.prod.yml up -d --build
+#   → open http://localhost:80
+#
+# Dokploy usage:
+#   Set the Compose Path to ./docker-compose.prod.yml in Dokploy.
+#   Dokploy will inject Traefik labels and the dokploy-network
+#   automatically — do NOT add them here.
+# --------------------------------------------------------------------------
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    restart: unless-stopped
+    # No ports mapping needed when behind Traefik/Dokploy.
+    # Uncomment the line below for local testing without a reverse proxy.
+    # ports:
+    #   - "80:80"

@@ -1,0 +1,44 @@
+# --------------------------------------------------------------------------
+# Dockerfile.prod — Production multi-stage build for the Bicycle Wheel
+# Circumference app.
+#
+# Stage 1 (build):
+#   • Installs dependencies and runs `npm run build` to produce a static
+#     bundle in /app/dist.
+#
+# Stage 2 (production):
+#   • Copies the built assets into an Nginx Alpine image.
+#   • Uses a custom nginx.conf that handles SPA routing (all paths
+#     fall back to index.html).
+#   • Serves on port 80 — Traefik/Dokploy will handle TLS termination.
+# --------------------------------------------------------------------------
+
+# ---- Build stage ----
+FROM node:25-alpine AS build
+
+WORKDIR /app
+
+# Install dependencies first (layer caching optimisation)
+COPY package.json package-lock.json ./
+RUN npm ci
+
+# Copy the rest of the source and build
+COPY . .
+RUN npm run build
+
+# ---- Production stage ----
+FROM nginx:stable-alpine AS production
+
+# Remove default Nginx site config
+RUN rm /etc/nginx/conf.d/default.conf
+
+# Add custom Nginx config for SPA routing
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Copy built assets from the build stage
+COPY --from=build /app/dist /usr/share/nginx/html
+
+EXPOSE 80
+
+# Nginx runs in the foreground by default with the official image
+CMD ["nginx", "-g", "daemon off;"]
